@@ -1,27 +1,35 @@
-Welcome to Glitch
+Albert's NEO Demo
 =================
 
-Click `Show` in the header to see your app live. Updates to your code will instantly deploy and update live.
+This is a simple Node.JS script that queries a NEO JSON-RPC service and announces whenever a ContractInvocation transaction is detected. The details of the transaction are then logged to the server console.
 
-**Glitch** is the friendly community where you'll build the app of your dreams. Glitch lets you instantly create, remix, edit, and host an app, bot or site, and you can invite collaborators or helpers to simultaneously edit code with you.
+This is to showcase the research on how to interact with the NEO Blockchain.
 
-Find out more [about Glitch](https://glitch.com/about).
-
-
-Your Project
+Getting Started
 ------------
 
-On the front-end,
-- edit `public/client.js`, `public/style.css` and `views/index.html`
-- drag in `assets`, like images or music, to add them to your project
+```
+git clone https://github.com/achen27/NEO_Test
+cd NEO_Test
+npm install
+node server.js
+```
 
-On the back-end,
-- your app starts at `server.js`
-- add frameworks and packages in `package.json`
-- safely store app secrets in `.env` (nobody can see this but you and people you invite)
+That's it!
+
+Settings
+------------
+
+Depending on what nodes are up, you may have to adjust the settings for the RPC server. The best way to test it for development is to do it under a privnet.
+
+Just uncomment and recomment the relevant server.
+
+```
+var rpcserver = 'http://localhost:30333';
+```
 
 
-Made by [Fog Creek](https://fogcreek.com/)
+Made by [Albert Chen]
 -------------------
 
 \ ゜o゜)ノ
