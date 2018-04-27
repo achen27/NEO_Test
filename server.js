@@ -17,7 +17,7 @@ var Neon = neonjs.default;
 
 
 
-var rpcserver = 'http://seed2.neo.org:10332';
+var rpcserver = 'https://pyrpc2.narrative.network:443';
 /* 
 private net:
 'http://localhost:30333';
@@ -45,19 +45,26 @@ async function checkBlock () {
 
 	if (blockCount > currentBlock) {
 
-		currentBlock = blockCount;
-		var block = await client.getBlock(currentBlock-1, 1);
-    	for (var i = block.tx.length - 1; i >= 0; i--) {
-    		if (block.tx[i].type === "ContractTransaction") {
-    			console.log("Contract Transaction Detected!");
-    			console.log(block.tx[i].vout);
-    		}
-    		if (block.tx[i].type === "InvocationTransaction") {
-    			console.log("Invocation Transaction Detected!");
-    			parseScript(block.tx[i].script);
-    		}
-    	}
-		    	
+		
+
+		try {
+			var block = await client.getBlock(currentBlock-1, 1);
+	    	for (var i = block.tx.length - 1; i >= 0; i--) {
+	    		if (block.tx[i].type === "ContractTransaction") {
+	    			console.log("Contract Transaction Detected!");
+	    			console.log(block.tx[i].vout);
+	    		}
+	    		if (block.tx[i].type === "InvocationTransaction") {
+	    			console.log("Invocation Transaction Detected!");
+	    			console.log("Txid:", block.tx[i].txid);
+	    			parseScript(block.tx[i].script);
+	    		}
+	    	}
+	    	currentBlock = blockCount;
+
+		} catch (err) {
+			console.log(err);
+		}
 
 
 	}
@@ -69,19 +76,28 @@ function parseScript (script) {
  *  Prints the details of the InvocationTransaction script
  *  @param {string} script - bytecode in hexstring format
  */	
-
-	const sb1 = Neon.create.scriptBuilder(script);
-	const params = sb1.toScriptParams();
-	if (params[0].scriptHash) {
-		console.log("---PARAMS---");
-		console.log("Script Hash:", params[0].scriptHash);
-		console.log("Method Call:", Neon.u.hexstring2str(params[0].args[0]))	;
-		console.log("From Address:", Neon.get.addressFromScriptHash(Neon.u.reverseHex(params[0].args[1][2])));
-		console.log("To Address:", Neon.get.addressFromScriptHash(Neon.u.reverseHex(params[0].args[1][1])));
-		console.log("Amount:", Neon.u.Fixed8.fromReverseHex(params[0].args[1][0]));
-	} else {
-		console.log("No script hash specified for this transaction!")
+ 	try {
+		const sb1 = Neon.create.scriptBuilder(script);
+		const params = sb1.toScriptParams();
+		if (params[0].scriptHash) {
+			try {
+				console.log("---Invocation Details---");
+				console.log("Script Hash:", params[0].scriptHash);
+				console.log("Method Call:", Neon.u.hexstring2str(params[0].args[0]))	;
+				console.log("From Address:", Neon.get.addressFromScriptHash(Neon.u.reverseHex(params[0].args[1][2])));
+				console.log("To Address:", Neon.get.addressFromScriptHash(Neon.u.reverseHex(params[0].args[1][1])));
+				console.log("Amount:", Neon.u.Fixed8.fromReverseHex(params[0].args[1][0]));
+			} catch (err) {
+				console.log("Not a NEP-5 call!");
+			}
+		} else {
+			console.log("No script hash specified for this transaction!")
+		}
+	} catch (err) {
+		console.log("Script bytecode not parseable!");
+		console.log("Script:", script);
 	}
+
 
 }
 
