@@ -135,17 +135,18 @@ function testScriptBuilder (script) {
 
 }
 
-async function testGetTx () {
+async function testGetTx (txid) {
 	try {
-		let res = await client.getRawTransaction('af3d953354d98afa06ec7386809ace8b0f595bdd4ecc79aab1e842a4adafed99', 1);
+		let res = await client.getRawTransaction(txid, 1);
 		console.log(res);
 		testScriptBuilder(res.script);
 	} catch (err) {
 		console.log(err);
 	}
 }
- 
-// testGetTx();
+/* testGetTx('a058c2278c932224892e179e7f32ff3874d3470711fd00b86af344ca41cb2e0b');
+testGetTx('c5b5050c69ecd2ee71f483cb2064bee4eb1dc3f4c983027d3965894055cdfc77');
+*/
 // testScriptBuilder();
 
 checkBlock();
